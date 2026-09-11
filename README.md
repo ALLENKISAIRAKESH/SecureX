@@ -215,6 +215,6 @@ SecureX/
 
 ## 🛡️ License
 
-This project is open-source software licensed under the [MIT License](LICENSE).  
-Copyright © 2026 **ALLENKI SAI RAKESH**. All rights reserved.
+Copyright © 2026 **ALLENKI SAI RAKESH**. All rights reserved.  
+Licensed under the [MIT License](LICENSE).
 
