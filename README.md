@@ -83,13 +83,38 @@ TOTP_ISSUER=SecureX
 CORS_ORIGIN=*
 ```
 
-### 5. Start the Server
+### 5. Seed Demo Data (Optional)
+Populate realistic users, analytics history, and sample keys:
+```bash
+npm run seed
+```
+
+### 6. Run Automated Tests
+Verify all API endpoints and security flows:
+```bash
+npm test
+```
+
+### 7. Start the Server
 ```bash
 npm start
+# Or for development with live watch:
+npm run dev
 ```
 
 Open your browser and visit:
 👉 **[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## 🐳 Docker Deployment
+
+Run SecureX along with an isolated MongoDB container in 1 command:
+
+```bash
+docker compose up -d --build
+```
+Access the application at `http://localhost:3000`. Stop containers anytime with `docker compose down`.
 
 ---
 
