@@ -15,16 +15,21 @@ jobs:
         image: mongo:7.0
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:
         node-version: [18.x, 20.x]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -35,15 +40,18 @@ jobs:
     - name: Seed Database
       run: npm run seed
       env:
-        MONGO_URI: mongodb://localhost:27017/securex
+        MONGO_URI: mongodb://127.0.0.1:27017/securex
         JWT_SECRET: test_ci_secret_key_2026
 
     - name: Start Application and Run Automated Integration Tests
       run: |
-        npm start &
-        sleep 5
+        node server.js &
+        for i in $(seq 1 20); do
+          curl -s http://127.0.0.1:3000/api/health && break || sleep 1
+        done
         npm test
       env:
         PORT: 3000
-        MONGO_URI: mongodb://localhost:27017/securex
+        MONGO_URI: mongodb://127.0.0.1:27017/securex
         JWT_SECRET: test_ci_secret_key_2026
+        TEST_URL: http://127.0.0.1:3000
