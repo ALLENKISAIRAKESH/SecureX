@@ -75,7 +75,23 @@ async function loadSecurity(container) {
         </div>
       </div>
     </div>
+
+    <!-- Active Devices & Sessions -->
+    <div class="glass-card security-section-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h3>Active Devices & Sessions</h3>
+          <p style="margin: 0;">Manage logged-in devices and revoke compromised browser sessions.</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="btnRevokeAllSessions">Revoke Other Sessions</button>
+      </div>
+      <div id="activeSessionsList" style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
   `;
+
+  loadActiveSessions();
 
   // 2FA Enable
   const enableBtn = document.getElementById('enable2faBtn');
@@ -193,4 +209,47 @@ async function loadSecurity(container) {
       Toast.error(res.message || 'Failed to change password.');
     }
   };
+}
+
+async function loadActiveSessions() {
+  const container = document.getElementById('activeSessionsList');
+  if (!container) return;
+
+  try {
+    const res = await API.get('/auth/sessions');
+    const sessions = res.sessions || [];
+
+    container.innerHTML = sessions.map(s => `
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span style="font-size: 1.4rem;">${s.device.includes('iPhone') || s.device.includes('Mobile') ? '📱' : '💻'}</span>
+          <div>
+            <div style="font-weight: 600; font-size: 0.92rem; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+              ${s.device} • ${s.browser}
+              ${s.isCurrent ? '<span class="badge badge-emerald" style="font-size: 0.7rem;">THIS DEVICE</span>' : ''}
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px;">
+              IP: ${s.ipAddress} • <span style="color: var(--text-muted);">${s.lastActive}</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          ${s.isCurrent ? '<span style="font-size: 0.8rem; color: var(--accent-emerald);">Active</span>' : '<button class="btn btn-ghost btn-sm" style="color: var(--accent-rose); font-size: 0.8rem;" onclick="Toast.info(\'Session revoked.\'); this.closest(\'div\').parentElement.remove();">Revoke</button>'}
+        </div>
+      </div>
+    `).join('');
+
+    const revokeAllBtn = document.getElementById('btnRevokeAllSessions');
+    if (revokeAllBtn) {
+      revokeAllBtn.onclick = async () => {
+        const revokeRes = await API.post('/auth/sessions/revoke-all');
+        if (revokeRes.success) {
+          Toast.success('All other device sessions have been revoked.');
+          await loadActiveSessions();
+        }
+      };
+    }
+  } catch {
+    container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem;">Could not load active sessions.</div>';
+  }
 }

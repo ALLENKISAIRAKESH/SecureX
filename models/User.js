@@ -29,7 +29,14 @@ const userSchema = new mongoose.Schema({
   lastLoginAt: { type: Date, default: null },
   lastLoginIp: { type: String, default: null },
   loginCount: { type: Number, default: 0 },
-  isActive: { type: Boolean, default: true }
+  isActive: { type: Boolean, default: true },
+  authProvider: {
+    type: String,
+    enum: ['local', 'google', 'github', 'magic_link'],
+    default: 'local'
+  },
+  magicToken: { type: String, default: null },
+  magicTokenExpires: { type: Date, default: null }
 }, { timestamps: true });
 
 userSchema.index({ createdAt: -1 });

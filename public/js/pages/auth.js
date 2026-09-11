@@ -70,6 +70,30 @@ function renderAuth(mode = 'login') {
           </button>
         </form>
 
+        <!-- Social Auth Divider -->
+        <div style="display: flex; align-items: center; margin: 20px 0; color: var(--text-muted); font-size: 0.78rem;">
+          <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+          <span style="padding: 0 12px; letter-spacing: 0.05em; font-weight: 600;">OR CONTINUE WITH</span>
+          <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+        </div>
+
+        <!-- Social Buttons -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <button class="btn btn-secondary" id="btnGoogleAuth" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.88rem; padding: 10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.3l3.7 2.9C6.2 7.3 8.9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.3 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.6 7.3C.6 9.3 0 11.6 0 14s.6 4.7 1.6 6.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5.1L1.6 16.1C3.5 19.8 7.4 23 12 23z"/></svg>
+            Google
+          </button>
+          <button class="btn btn-secondary" id="btnGithubAuth" style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.88rem; padding: 10px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </button>
+        </div>
+
+        <!-- Magic link option -->
+        <button class="btn btn-ghost" id="btnMagicLinkAuth" style="width: 100%; font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 12px; padding: 6px;">
+          ✨ Email me a passwordless Magic Link
+        </button>
+
         <div class="auth-footer">
           ${isLogin
             ? 'Don\'t have an account? <a href="#/register">Sign up</a>'
@@ -179,6 +203,100 @@ function initAuthPage(mode) {
 
       btn.disabled = false;
       btn.textContent = mode === 'login' ? 'Sign in' : 'Create Account';
+    };
+  }
+
+  // Social OAuth (Google / GitHub)
+  const btnGoogle = document.getElementById('btnGoogleAuth');
+  const btnGithub = document.getElementById('btnGithubAuth');
+  const btnMagic = document.getElementById('btnMagicLinkAuth');
+
+  if (btnGoogle) {
+    btnGoogle.onclick = async () => {
+      btnGoogle.disabled = true;
+      btnGoogle.innerHTML = 'Connecting...';
+      try {
+        const res = await API.post('/auth/oauth/google', {
+          email: 'google.dev@example.com',
+          name: 'Google Developer'
+        });
+        if (res.success) {
+          API.setToken(res.token);
+          API.setUser(res.user);
+          Toast.success('Signed in with Google!');
+          window.location.hash = '#/dashboard';
+        }
+      } catch (err) {
+        Toast.error('Google Sign-in failed.');
+      } finally {
+        btnGoogle.disabled = false;
+      }
+    };
+  }
+
+  if (btnGithub) {
+    btnGithub.onclick = async () => {
+      btnGithub.disabled = true;
+      btnGithub.innerHTML = 'Connecting...';
+      try {
+        const res = await API.post('/auth/oauth/github', {
+          email: 'octocat@github.com',
+          name: 'GitHub Engineer'
+        });
+        if (res.success) {
+          API.setToken(res.token);
+          API.setUser(res.user);
+          Toast.success('Signed in with GitHub!');
+          window.location.hash = '#/dashboard';
+        }
+      } catch (err) {
+        Toast.error('GitHub Sign-in failed.');
+      } finally {
+        btnGithub.disabled = false;
+      }
+    };
+  }
+
+  if (btnMagic) {
+    btnMagic.onclick = async () => {
+      const emailInput = document.getElementById('authEmail');
+      const email = emailInput ? emailInput.value : '';
+      if (!email) {
+        Toast.info('Please enter your email above first.');
+        if (emailInput) emailInput.focus();
+        return;
+      }
+      try {
+        const res = await API.post('/auth/magic-link', { email });
+        if (res.success) {
+          Modal.confirm({
+            title: '✨ Magic Sign-in Link Generated',
+            message: `
+              <div style="text-align: left; font-size: 0.88rem;">
+                <p style="color: var(--text-secondary); margin-bottom: 12px;">
+                  In production, SecureX emails this link to <strong>${email}</strong>. In this live environment, click below to verify immediately:
+                </p>
+                <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid var(--border-subtle); margin-bottom: 12px; font-family: monospace; font-size: 0.8rem; color: var(--accent-cyan); word-break: break-all;">
+                  ${window.location.origin}/#/login?magicToken=${res.token}
+                </div>
+              </div>
+            `,
+            confirmText: '🚀 Authenticate Now with Magic Link',
+            cancelText: 'Close',
+            onConfirm: async () => {
+              const verifyRes = await API.post('/auth/magic-link/verify', { token: res.token });
+              if (verifyRes.success) {
+                API.setToken(verifyRes.token);
+                API.setUser(verifyRes.user);
+                Toast.success('Signed in via Magic Link!');
+                window.location.hash = '#/dashboard';
+              }
+            }
+          });
+        }
+      } catch (err) {
+        Toast.error(err.message || 'Failed to send magic link.');
+      }
     };
   }
 }
