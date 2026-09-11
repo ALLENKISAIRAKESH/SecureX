@@ -225,7 +225,7 @@ function renderLanding() {
           </div>
         </div>
         <div class="footer-bottom">
-          <span>© 2026 SecureX. All rights reserved.</span>
+          <span>© 2026 SecureX by ALLENKI SAI RAKESH. All rights reserved.</span>
           <span>Built with 🔒 for developers</span>
         </div>
       </footer>

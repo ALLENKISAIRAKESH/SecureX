@@ -2,6 +2,8 @@
   "name": "securex",
   "version": "1.0.0",
   "description": "SecureX — Authentication-as-a-Service platform. Integrate robust auth into any app in minutes.",
+  "author": "ALLENKI SAI RAKESH",
+  "license": "MIT",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
