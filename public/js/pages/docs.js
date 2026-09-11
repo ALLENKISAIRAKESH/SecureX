@@ -285,10 +285,13 @@ curl -X GET http://localhost:3000/api/dashboard/stats \
 &lt;/button&gt;</pre>
               </div>
 
-              <div style="display: flex; justify-content: center; gap: 16px;">
+              <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
                 <button class="btn btn-primary btn-lg" id="btnPreviewWidget">
                   ✨ Preview Drop-in Modal Now
                 </button>
+                <a class="btn btn-secondary btn-lg" href="/demo.html" target="_blank" style="text-decoration:none;">
+                  🚀 Open Live Client Demo ↗
+                </a>
                 <a class="btn btn-secondary btn-lg" href="#/register">
                   Create Production App →
                 </a>

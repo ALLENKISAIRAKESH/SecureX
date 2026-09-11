@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acme Analytics — Powered by SecureX</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #090d16;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00d4ff, #8b5cf6);
+      color: #fff;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+    main {
+      flex: 1;
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 24px;
+      width: 100%;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 36px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      background: rgba(0, 212, 255, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+    h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
+    p { color: #94a3b8; font-size: 1.05rem; line-height: 1.6; margin-bottom: 28px; }
+    .code-box {
+      background: #040711;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: left;
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: #93c5fd;
+      margin-top: 32px;
+      line-height: 1.6;
+    }
+    #userProfileArea {
+      display: none;
+      margin-top: 24px;
+      text-align: left;
+      background: rgba(0, 212, 255, 0.05);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span>🚀</span>
+      <span>Acme Analytics <small style="color: #64748b; font-size: 0.8rem; font-weight: 400;">(Demo Third-Party App)</small></span>
+    </div>
+    <div id="navAuth">
+      <button class="btn btn-primary" id="btnLaunchAuth">Sign in with SecureX</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="badge">SDK Integration Demo</div>
+      <h1>Drop-in Authentication Demo</h1>
+      <p>
+        This page represents an external web application that embeds the SecureX client-side SDK.
+        Click below to launch the modal, sign in with your account, and receive authenticated identity callbacks.
+      </p>
+
+      <div style="display: flex; justify-content: center; gap: 14px;">
+        <button class="btn btn-primary" id="btnLaunchAuthMain" style="font-size: 1rem; padding: 14px 28px;">
+          🔐 Launch SecureX Auth Modal
+        </button>
+        <a class="btn btn-secondary" href="/#/" style="text-decoration: none; display: inline-flex; align-items: center;">
+          ← Back to SecureX Home
+        </a>
+      </div>
+
+      <!-- Authenticated Profile Card -->
+      <div id="userProfileArea">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="color: #38bdf8; margin: 0;">✓ Authenticated Session Received</h3>
+          <button class="btn btn-secondary" id="btnLogout" style="padding: 6px 14px; font-size: 0.8rem;">Sign Out</button>
+        </div>
+        <div style="font-size: 0.95rem; margin-bottom: 6px;"><strong>Name:</strong> <span id="authUserName">--</span></div>
+        <div style="font-size: 0.95rem; margin-bottom: 6px;"><strong>Email:</strong> <span id="authUserEmail">--</span></div>
+        <div style="font-size: 0.85rem; color: #94a3b8; word-break: break-all; margin-top: 12px;">
+          <strong>JWT Bearer Token:</strong><br>
+          <code id="authToken" style="color: #a7f3d0; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px; display: block; margin-top: 4px;">--</code>
+        </div>
+      </div>
+
+      <!-- Code Snippet -->
+      <div class="code-box">
+        <div style="color: #64748b; margin-bottom: 8px;">// That's all it takes to integrate into your site:</div>
+        <div>&lt;script src="http://localhost:3000/embed/securex.js"&gt;&lt;/script&gt;</div>
+        <br>
+        <div>SecureX.openLogin({</div>
+        <div>&nbsp;&nbsp;onSuccess: (session) =&gt; console.log('Authenticated:', session.user)</div>
+        <div>});</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Load SecureX Drop-in Client SDK -->
+  <script src="/embed/securex.js"></script>
+
+  <script>
+    function updateUI() {
+      const user = SecureX.getUser();
+      const token = SecureX.getToken();
+      const userArea = document.getElementById('userProfileArea');
+      const navAuth = document.getElementById('navAuth');
+
+      if (user && token) {
+        userArea.style.display = 'block';
+        document.getElementById('authUserName').innerText = user.name || 'User';
+        document.getElementById('authUserEmail').innerText = user.email || '';
+        document.getElementById('authToken').innerText = token;
+        navAuth.innerHTML = `
+          <span style="font-size:0.9rem; color:#94a3b8; margin-right:12px;">Signed in as <strong>${user.name}</strong></span>
+          <button class="btn btn-secondary" onclick="SecureX.logout(); updateUI();">Logout</button>
+        `;
+      } else {
+        userArea.style.display = 'none';
+        navAuth.innerHTML = `<button class="btn btn-primary" onclick="launchAuth()">Sign in with SecureX</button>`;
+      }
+    }
+
+    function launchAuth() {
+      SecureX.openLogin({
+        onSuccess: (session) => {
+          updateUI();
+        }
+      });
+    }
+
+    document.getElementById('btnLaunchAuth').onclick = launchAuth;
+    document.getElementById('btnLaunchAuthMain').onclick = launchAuth;
+    document.getElementById('btnLogout').onclick = () => {
+      SecureX.logout();
+      updateUI();
+    };
+
+    updateUI();
+  </script>
+</body>
+</html>

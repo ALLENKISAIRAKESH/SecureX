@@ -25,6 +25,7 @@ function renderLanding() {
             <a class="nav-link" href="#features">Features</a>
             <a class="nav-link" href="#pricing">Pricing</a>
             <a class="nav-link" href="#/docs">Docs & API</a>
+            <a class="nav-link" href="/demo.html" target="_blank" style="color: var(--accent-cyan);">Live Demo ↗</a>
           </div>
           <div class="nav-actions">
             ${API.isLoggedIn()
